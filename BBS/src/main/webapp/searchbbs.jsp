@@ -28,6 +28,10 @@
 		if(request.getParameter("pageNumber") != null){
 			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
 		}
+		String searchText = "";
+		if(request.getParameter("searchText") != null){
+			searchText = request.getParameter("searchText");
+		}
 	%>
 
 	<nav class="navbar navbar-default">
@@ -94,7 +98,7 @@
 				<tbody>
 					<%
 						BbsDAO bbsDAO = new BbsDAO();
-						ArrayList<Bbs> list = bbsDAO.getList(pageNumber);
+						ArrayList<Bbs> list = bbsDAO.search(searchText, pageNumber);
 						for(int i=0; i < list.size(); i++) {
 					%>
 					<tr>
@@ -121,15 +125,15 @@
 				</div>
 			</div><br>	
 			<%
-				if(pageNumber != 1) {			
+					if(pageNumber != 1) {			
 			%>
-				<a href="bbs.jsp?pageNumber=<%=pageNumber - 1%>" class="btn btn-success btn-arraw-left">이전</a>
+					<a href="searchbbs.jsp?pageNumber=<%=pageNumber - 1%>" class="btn btn-success btn-arraw">이전</a>
 			<%
-				} if(bbsDAO.nextPage(pageNumber + 1)) {
+					} if(bbsDAO.searchCount(searchText) > 10) {
 			%>
-				<a href="bbs.jsp?pageNumber=<%=pageNumber + 1%>" class="btn btn-success btn-arraw-left">이후</a>
+					<a href="searchbbs.jsp?pageNumber=<%=pageNumber + 1%>" class="btn btn-success btn-arraw">이후</a>
 			<%
-				}
+					}
 			%>
 				<a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
 		</div>

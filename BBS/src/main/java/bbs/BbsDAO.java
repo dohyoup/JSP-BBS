@@ -16,7 +16,7 @@ public class BbsDAO {
 			String dbURL = "jdbc:mysql://localhost:3306/BBS";
 			String dbID ="root";
 			String dbPassword ="root";
-			Class.forName("com.mysql.jdbc.Driver"); //데이타베이스 접근가능하기 해주는 매개역할 라이브러리
+			Class.forName("com.mysql.cj.jdbc.Driver"); //데이타베이스 접근가능하기 해주는 매개역할 라이브러리
 			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -105,14 +105,12 @@ public class BbsDAO {
 			e.printStackTrace();
 		}
 		return false; 
-	
 	}
 	
 	public Bbs getBbs(int bbsID) {
 		String SQL = "SELECT * FROM BBS WHERE bbsID = ?";
 		try {
-			PreparedStatement pstmt = conn.prepareStatement(SQL); // 데이터베이스 연결객체 conn을 애용해서 SQL문장을 실행준비 단계로 만듬 
-			pstmt.setInt(1, bbsID);
+			PreparedStatement pstmt = conn.prepareStatement(SQL); 
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				Bbs bbs = new Bbs();
@@ -128,6 +126,45 @@ public class BbsDAO {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public int searchCount(String searchText) {
+		String SQL ="SELECT * FROM BBS WHERE bbsTitle LIKE '%"+searchText.trim()+"%' AND bbsAvailable = 1";
+		int count = 0;
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				count++;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(count);
+		return count;
+	}
+	
+	public ArrayList<Bbs> search(String searchText, int pageNumber) {
+		String SQL = "SELECT * FROM BBS WHERE bbsTitle LIKE '%"+searchText.trim()+"%'AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT 10";
+		ArrayList<Bbs> list = new ArrayList<Bbs>();
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL); // 데이터베이스 연결객체 conn을 애용해서 SQL문장을 실행준비 단계로 만듬 
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				Bbs bbs = new Bbs();
+				bbs.setBbsID(rs.getInt(1));
+				bbs.setBbsTitle(rs.getString(2));
+				bbs.setUserID(rs.getString(3));
+				bbs.setBbsDate(rs.getString(4));
+				bbs.setBbsContent(rs.getString(5));
+				bbs.setBbsAvailable(rs.getInt(6));
+				list.add(bbs);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("list : " + list);
+		return list; 
 	}
 	
 	public int update(int bbsID, String bbsTitle, String bbsContent) {

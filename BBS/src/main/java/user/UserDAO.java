@@ -15,7 +15,7 @@ public class UserDAO {
 			String dbURL = "jdbc:mysql://localhost:3306/BBS";
 			String dbID ="root";
 			String dbPassword ="root";
-			Class.forName("com.mysql.jdbc.Driver"); //데이타베이스 접근가능하기 해주는 매개역할 라이브러리
+			Class.forName("com.mysql.cj.jdbc.Driver"); //데이타베이스 접근가능하기 해주는 매개역할 라이브러리
 			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -40,7 +40,7 @@ public class UserDAO {
 		}
 		return -2; //데이터베이스 오류
 	}
-
+    
 	public int join(User user) {
 		String SQL = "INSERT INTO USER VALUES(?, ?, ?, ?, ?)";
 		try {
@@ -55,7 +55,6 @@ public class UserDAO {
 			e.printStackTrace();
 		}
 		return -1; // 데이터베이스 오류
-		
 	}
 	
 }
